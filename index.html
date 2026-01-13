@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignFlow — Digital Signatures for Everyone</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0f0f1a 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 60px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            color: #a5b4fc;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-size: clamp(36px, 8vw, 56px);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+
+        h1 span {
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto 48px;
+            line-height: 1.6;
+        }
+
+        .price-compare {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+        }
+
+        .price-box {
+            padding: 24px 32px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .price-box.old {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .price-box.new {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .price-box .label {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .price-box .price {
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .price-box.old .price {
+            color: #ef4444;
+            text-decoration: line-through;
+        }
+
+        .price-box.new .price {
+            color: #10b981;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 24px;
+            border-radius: 16px;
+            text-align: left;
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .feature h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .feature p {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        .signup-section {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 24px;
+            padding: 48px 32px;
+            margin-bottom: 40px;
+        }
+
+        .signup-section h2 {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .signup-section p {
+            color: #94a3b8;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            display: flex;
+            gap: 12px;
+            max-width: 500px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .form-group input {
+            flex: 1;
+            min-width: 250px;
+            padding: 16px 24px;
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 16px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #6366f1;
+        }
+
+        .form-group input::placeholder {
+            color: #64748b;
+        }
+
+        .form-group button {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .success-message {
+            display: none;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            padding: 20px;
+            border-radius: 12px;
+            color: #10b981;
+            margin-top: 20px;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #6366f1;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        footer {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        footer a {
+            color: #6366f1;
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            .price-compare {
+                gap: 20px;
+            }
+            .form-group {
+                flex-direction: column;
+            }
+            .form-group input,
+            .form-group button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">SignFlow</div>
+
+        <div class="badge">🚀 Coming Soon — Join the Waitlist</div>
+
+        <h1>Digital Signatures<br>for <span>Everyone</span></h1>
+
+        <p class="subtitle">
+            DocuSign costs $25/month. We believe digital signatures should be affordable for freelancers, small businesses, and regular people. Not just corporations.
+        </p>
+
+        <div class="price-compare">
+            <div class="price-box old">
+                <div class="label">DocuSign / Adobe Sign</div>
+                <div class="price">$25-45/mo</div>
+            </div>
+            <div class="price-box new">
+                <div class="label">SignFlow</div>
+                <div class="price">$4.99/mo</div>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">📱</div>
+                <h3>Works Everywhere</h3>
+                <p>iOS, Android, Telegram, Web — sign from any device</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔗</div>
+                <h3>Blockchain Verified</h3>
+                <p>Every signature is recorded on blockchain — can't be faked</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3>Telegram Native</h3>
+                <p>Built-in Telegram Mini App — no download needed</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚖️</div>
+                <h3>Legally Binding</h3>
+                <p>Compliant with ESIGN Act, eIDAS, and 40+ countries</p>
+            </div>
+        </div>
+
+        <div class="signup-section">
+            <h2>🎯 Get Early Access</h2>
+            <p>Be the first to try SignFlow. No spam, just launch updates.</p>
+            
+            <form id="signup-form" class="form-group">
+                <input type="email" id="email" placeholder="Enter your email" required>
+                <button type="submit" id="submit-btn">Join Waitlist</button>
+            </form>
+            
+            <div id="success-message" class="success-message">
+                ✅ You're on the list! We'll notify you when we launch.
+            </div>
+            
+            <div id="error-message" class="success-message" style="display:none; background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444;">
+                ❌ Something went wrong. Please try again.
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="counter">0</div>
+                <div class="stat-label">People on waitlist</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">$5</div>
+                <div class="stat-label">Per month</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">40+</div>
+                <div class="stat-label">Countries supported</div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Have questions? <a href="mailto:asket2036games@gmail.com">asket2036games@gmail.com</a></p>
+            <p style="margin-top: 8px;">© 2026 SignFlow. Digital signatures for the modern world.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Google Sheets integration via Apps Script
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyRga5b-lqFhgrqf-6C638iB4xHadIk1IR9uJZnY2pTcnYM8IIb1dg92RvebFeM9-QV4A/exec';
+        
+        const form = document.getElementById('signup-form');
+        const emailInput = document.getElementById('email');
+        const submitBtn = document.getElementById('submit-btn');
+        const successMessage = document.getElementById('success-message');
+        const errorMessage = document.getElementById('error-message');
+        const counter = document.getElementById('counter');
+
+        // Загружаем реальный счётчик из Google Sheets
+        async function loadRealCount() {
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL);
+                const data = await response.json();
+                if (data.count !== undefined) {
+                    animateCounter(data.count);
+                }
+            } catch (error) {
+                console.log('Could not load count:', error);
+                counter.textContent = '0';
+            }
+        }
+
+        // Отправка email
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = emailInput.value.trim();
+            if (!email) return;
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            
+            try {
+                // POST с no-cors (Google Apps Script требует)
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'text/plain',
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+                
+                // Ждём немного и получаем обновлённый счётчик через GET
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                const countResponse = await fetch(GOOGLE_SCRIPT_URL);
+                const countData = await countResponse.json();
+                
+                if (countData.count !== undefined) {
+                    counter.textContent = countData.count;
+                }
+                
+                form.style.display = 'none';
+                successMessage.classList.add('show');
+                console.log('📧 Email saved! Total:', countData.count);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                // Даже если ошибка чтения - POST мог пройти
+                form.style.display = 'none';
+                successMessage.classList.add('show');
+            }
+        });
+
+        // Анимация счётчика
+        function animateCounter(target) {
+            let current = 0;
+            const step = Math.max(1, Math.floor(target / 20));
+            
+            if (target === 0) {
+                counter.textContent = '0';
+                return;
+            }
+            
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                counter.textContent = current;
+            }, 50);
+        }
+        
+        // Загружаем счётчик при открытии страницы
+        loadRealCount();
+    </script>
+</body>
+</html>
