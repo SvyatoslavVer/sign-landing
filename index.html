@@ -368,6 +368,38 @@
         const errorMessage = document.getElementById('error-message');
         const counter = document.getElementById('counter');
 
+        // Собираем аналитику
+        function getAnalyticsData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return {
+                referrer: document.referrer || 'direct',
+                utm_source: urlParams.get('utm_source') || '',
+                utm_medium: urlParams.get('utm_medium') || '',
+                utm_campaign: urlParams.get('utm_campaign') || '',
+                device: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+                language: navigator.language || '',
+                screen: window.screen.width + 'x' + window.screen.height
+            };
+        }
+
+        // Трекаем визит при загрузке страницы
+        async function trackVisit() {
+            try {
+                const analytics = getAnalyticsData();
+                analytics.type = 'visit';
+                
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(analytics)
+                });
+                console.log('📊 Visit tracked');
+            } catch (error) {
+                console.log('Could not track visit:', error);
+            }
+        }
+
         // Загружаем реальный счётчик из Google Sheets
         async function loadRealCount() {
             try {
@@ -376,13 +408,16 @@
                 if (data.count !== undefined) {
                     animateCounter(data.count);
                 }
+                if (data.visits !== undefined) {
+                    console.log('📈 Total visits:', data.visits);
+                }
             } catch (error) {
                 console.log('Could not load count:', error);
                 counter.textContent = '0';
             }
         }
 
-        // Отправка email
+        // Отправка email с аналитикой
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -393,6 +428,10 @@
             submitBtn.textContent = 'Sending...';
             
             try {
+                // Собираем email + аналитику
+                const data = getAnalyticsData();
+                data.email = email;
+                
                 // POST с no-cors (Google Apps Script требует)
                 await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
@@ -400,7 +439,7 @@
                     headers: {
                         'Content-Type': 'text/plain',
                     },
-                    body: JSON.stringify({ email: email })
+                    body: JSON.stringify(data)
                 });
                 
                 // Ждём немного и получаем обновлённый счётчик через GET
@@ -424,7 +463,7 @@
                 successMessage.classList.add('show');
             }
         });
-        // Ребил
+
         // Анимация счётчика
         function animateCounter(target) {
             let current = 0;
@@ -445,8 +484,9 @@
             }, 50);
         }
         
-        // Загружаем счётчик при открытии страницы
+        // Загружаем счётчик и трекаем визит при открытии страницы
         loadRealCount();
+        trackVisit();
     </script>
 </body>
 </html>
