@@ -382,8 +382,15 @@
             };
         }
 
-        // Трекаем визит при загрузке страницы
+        // Трекаем визит при загрузке страницы (только уникальные)
         async function trackVisit() {
+            // Проверяем, был ли уже визит
+            const visitKey = 'signflow_visited';
+            if (localStorage.getItem(visitKey)) {
+                console.log('📊 Returning visitor (not counted)');
+                return;
+            }
+            
             try {
                 const analytics = getAnalyticsData();
                 analytics.type = 'visit';
@@ -394,7 +401,10 @@
                     headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify(analytics)
                 });
-                console.log('📊 Visit tracked');
+                
+                // Отмечаем что визит засчитан
+                localStorage.setItem(visitKey, Date.now().toString());
+                console.log('📊 New unique visit tracked');
             } catch (error) {
                 console.log('Could not track visit:', error);
             }
